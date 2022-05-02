@@ -14,7 +14,7 @@ import cProfile
 import sys
 import os
 sys.path.append(os.path.normpath(r"\\wsl.localhost\Ubuntu-20.04\home\delpropo\github\courses\bifx"))
-from week1 import extract_seq_from_txt, values_in_range, dl_save_txt
+from week1 import extract_seq_from_txt, max_values_in_range, dl_save_txt
 
 
 def seq_size_generator(sequence: str, size: int):
@@ -38,11 +38,11 @@ def pattern_locations_np(sequence: str, pattern: str) -> list:
     param: sequence:  string with the sequence being searched
     param: pattern:  the sequences being searched
     return: a list of the bp locations of the start of the sequence
-    >>> " ".join([str(j) for j in pattern_locations("GATATATGCATATACTT", "ATAT")])
+    >>> " ".join([str(j) for j in pattern_locations_np("GATATATGCATATACTT", "ATAT")])
     '1 3 9'
-    >>> " ".join([str(j) for j in pattern_locations("ATGCATGC", "ATGC")])
+    >>> " ".join([str(j) for j in pattern_locations_np("ATGCATGC", "ATGC")])
     '0 4'
-    >>> " ".join([str(j) for j in pattern_locations("ATATATAT", "ATAT")])
+    >>> " ".join([str(j) for j in pattern_locations_np("ATATATAT", "ATAT")])
     '0 2 4'
     """
     sequence = np.array(list(sequence))
@@ -69,15 +69,16 @@ def word_starts(sequence: str, size: int) -> dict:
     # initialize a dictionary to contains the k-mer and sequence start
     seq_starts_dict = {}
 
-    bp = 0
+    #
+    bp_count = 0
     for i in seq_size_generator(sequence, size):
         # all values are at the same size
         assert len(i) == size
         if i in seq_starts_dict.keys():
-            seq_starts_dict[i].append(bp)
+            seq_starts_dict[i].append(bp_count)
         elif i is not None:
-            seq_starts_dict[i] =[bp]
-        bp += 1
+            seq_starts_dict[i] =[bp_count]
+        bp_count += 1
 
     return seq_starts_dict
 
@@ -91,18 +92,24 @@ def values_in_range_complete(value_list: list, bp_range: int, pattern: str) -> i
     param: value_list: list of values which should be in numerical order
     param: bp_range the largest difference between two values in the list allowed
     return:  max_value:  the largest number of values in a slice where the starting and final value are less than or equal to range_num
-    >>> values_in_range_complete([0, 10, 50, 85, 86, 91], 5)
+    >>> values_in_range_complete([0, 10, 50, 85, 86, 91], 5, "")
     2
-    >>> values_in_range_complete([0, 10, 50, 84, 85, 86, 91], 6, 2)
+    >>> values_in_range_complete([0, 10, 50, 84, 85, 86, 91], 6, "")
     3
-    >>> values_in_range_complete([0, 1, 2, 3, 4, 5, 6], 6, 10)
+    >>> values_in_range_complete([0, 1, 2, 3, 4, 5, 6], 6, "")
     6
-    >>> values_in_range_complete([1, 2, 3, 4, 5, 6], 6)
+    >>> values_in_range_complete([1, 2, 3, 4, 5, 6], 6, "")
     6
-    >>> values_in_range_complete([0, 499, 500], 6)
+    >>> values_in_range_complete([0, 499, 500], 500, "ATGCA")
     2
+    >>> values_in_range_complete([0, 450, 495], 500, "ATGCA")
+    2
+    >>> values_in_range_complete([0, 450, 494], 500, "ATGCA")
+    3
+    >>> values_in_range_complete([0, 450, 493], 500, "ATGCA")
+    3
     """
-    #sort(values_in_range)
+
     num_values = len(value_list)
     length_seq = len(pattern)
     # create a default of 0 for the maximum number of starts is a given bp_range
@@ -110,7 +117,7 @@ def values_in_range_complete(value_list: list, bp_range: int, pattern: str) -> i
     for i in range(num_values):
         for j in range(i+1, num_values):
             assert j > i and value_list[j] > value_list[i]
-            if bp_range >= (value_list[j] - value_list[i] + length_seq) and max_value < j-i + 1:
+            if bp_range > (value_list[j] - value_list[i] + length_seq) and max_value < j-i + 1:
                 max_value = j-i + 1
 
     return max_value
@@ -119,7 +126,7 @@ def values_in_range_complete(value_list: list, bp_range: int, pattern: str) -> i
 
 
 def main():
-    """
+
     seq_test = "ATGCGCATGCACATGCGCAGTCGTGTGAGATCAGATATGCGCAGCGATGCACGTCGTGTGAATGCGCAGATCAGATGCGATGCACGTCGTGTGAGATCAGATGCGATGCACGTCGTGTGAGATCAGATGCGATGCACGTCGTGTGAGATCAGATGCGATGCACGTCGTGTGAGATCAGATGCGATGCACGTCGTGTGAGATCAGATGCGCA"
     pattern = "ATGCGCA"
 
@@ -129,10 +136,9 @@ def main():
     ecoli_genome = extract_seq_from_txt(ecoli_data_path).split("\n")[0]
     #print(search_clumps(ecoli_genome, 9, 500, 3))
 
-    #print(len(cholera_genome))
-    #print((len(ecoli_genome)))
-    #print(timeit.timeit('len("cholera_genome")'))
-    #print(time.time_ns.split("\n")
+
+
+
     #search_clumps(cholera_genome, 9, 500, 3)
     #print(max_freq_words(cholera_genome, 9, all_values=True))
     #print(search_clumps(cholera_genome, 9, 500, 3))
@@ -140,7 +146,7 @@ def main():
     #print(search_clumps_np(cholera_genome, 9, 500, 3))
     #search_clumps_np(cholera_genome, 9, 500, 3)
 
-    #print(pattern_locations_np(seq_test, pattern))
+
 
     cholera_file = os.path.normpath(".\data\PatternMatching_locations\inputs\Vibrio_cholerae.txt")
     print(cholera_file)
@@ -168,8 +174,7 @@ def main():
 
     print(count_seq)
     print(total_seq)
-    #with open(file_path, "w") as text_file:
-    #    text_file.write(sequence)
+
 
     print("correct range")
     correct_range_count = 0
@@ -179,9 +184,9 @@ def main():
 
     print(correct_range_count)
 
-"""
+
 if __name__ == "__main__":
     main()
-    #import doctest
-    #doctest.testmod
+    import doctest
+    doctest.testmod
 

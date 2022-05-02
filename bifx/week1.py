@@ -10,17 +10,18 @@ Finding Hidden Messages in DNA (Bioinformatics I)
 import urllib.request
 import os
 from collections import OrderedDict
-import timeit
+
 import numpy as np
 
 COMPLEMENT_DNA_BASES = {"A": "T", "T": "A", "G": "C", "C": "G"}
 
 def extract_seq_from_txt(file_path: os.path) -> str:
-
     """
+    Extract string from file.  This may include multiple strings.
+    removes any new line from end of string.
     extracts a string sequence from a text file
     param: file_path: path where the file is located
-    return: sequence: sequence extracted from the text file
+    return: sequence: string extracted from the text file
 
     >>> len(extract_seq_from_txt(os.path.normpath(".\data\Vibrio_cholerae.txt")))
     1108250
@@ -31,11 +32,11 @@ def extract_seq_from_txt(file_path: os.path) -> str:
 
     if os.path.exists(file_path):
         with open(file=file_path, mode="r", encoding='utf-8') as text_file:
-            sequence = text_file.read()
+            return text_file.read().rstrip('\n')
     else:
-        sequence = -1
+        return -1
 
-    return sequence
+
 
 def pattern_count(sequence: str, pattern: str) -> int:
     """
@@ -236,7 +237,7 @@ def search_clumps(sequence: str, size: int, range_clumps: int, min_clumps: int )
     for (key, value) in frequency_dict.items():
         if value >= min_clumps:
             #start_list = pattern_locations(sequence, key)
-            if values_in_range(pattern_locations(sequence, key), range_clumps) >= min_clumps:
+            if max_values_in_range(pattern_locations(sequence, key), range_clumps) >= min_clumps:
                 pattern_list.add(key)
 
     return pattern_list
@@ -244,7 +245,7 @@ def search_clumps(sequence: str, size: int, range_clumps: int, min_clumps: int )
 
 
 
-def values_in_range(value_list: list, bp_range: int) -> int:
+def max_values_in_range(value_list: list, bp_range: int) -> int:
     """
     Determines the maximum number of values in a specified range of a list
     [0, 1, 2, 5, 10] with a range of 2 would have 2 values
@@ -254,13 +255,13 @@ def values_in_range(value_list: list, bp_range: int) -> int:
     return:  max_value:  the largest number of values in a slice where the starting and final value are less than or equal to range_num
     >>> values_in_range([0, 10, 50, 85, 86, 91], 5)
     2
-    >>> values_in_range([0, 10, 50, 84, 85, 86, 91], 6)
+    >>> max_values_in_range([0, 10, 50, 84, 85, 86, 91], 6)
     3
-    >>> values_in_range([0, 1, 2, 3, 4, 5, 6], 6)
+    >>> max_values_in_range([0, 1, 2, 3, 4, 5, 6], 6)
     6
-    >>> values_in_range([1, 2, 3, 4, 5, 6], 6)
+    >>> max_values_in_range([1, 2, 3, 4, 5, 6], 6)
     6
-    >>> values_in_range([0, 499, 500], 6)
+    >>> max_values_in_range([0, 499, 500], 6)
     2
     """
     #sort(values_in_range)
@@ -277,7 +278,7 @@ def values_in_range(value_list: list, bp_range: int) -> int:
 
 
 
-def main():
+def main() -> None:
     # vibrio cholerae genome is 1108250 nucleotides
     VIBRIO_CHOLERAE_LENGTH = 1108250
     vb_genome_url = "http://bioinformaticsalgorithms.com/data/realdatasets/Replication/Vibrio_cholerae.txt"
@@ -310,10 +311,9 @@ def main():
     file_list = [os.path.join(test_file_rc_dir, file) for file in os.listdir(test_file_rc_dir) if file.endswith(".txt")]
     file_list.sort()
     for i in file_list:
-        #print(i)
         sequences = extract_seq_from_txt(i).split("\n")
-        #print("reverse complement sequence")
-        #print(reverse_complement(sequences[0]))
+        print("reverse complement sequence")
+        print(reverse_complement(sequences[0]))
 
     # locate the starting position of a pattern in a sequence.  Space separated
 

@@ -1,0 +1,29 @@
+params:
+  test_count:
+
+# example parameters
+
+params:
+  param_1: 20
+  param_2: "http://something.com"
+  param_3: 500
+
+files:
+  test_data: blah.txt
+  test_labels: blah2.txt
+paths:
+  log: ./runs
+  data: ../data/raw
+  data_cwd: ${hydra:runtime.cwd}/../data/raw
+
+
+  # hydra creates an outputs folder with a date and time
+  # hydra changes the working directory to the
+
+# this is the code that will be in the main program
+
+#import hydra
+#add a decorator to the top
+#@hydra.main(config_path"conf", config_name="config"
+#def main(cfg):
+
