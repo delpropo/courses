@@ -14,6 +14,7 @@ from collections import OrderedDict
 import numpy as np
 
 COMPLEMENT_DNA_BASES = {"A": "T", "T": "A", "G": "C", "C": "G"}
+DNA_BASES = ("A", "T", "G", "C")
 
 def extract_seq_from_txt(file_path: os.path) -> str:
     """

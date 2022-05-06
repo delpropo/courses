@@ -5,7 +5,7 @@ import sys
 import os
 
 sys.path.append(os.path.normpath(r"\\wsl.localhost\Ubuntu-20.04\home\delpropo\github\courses\bifx"))
-from week1 import extract_seq_from_txt, max_values_in_range, dl_save_txt
+from week1 import extract_seq_from_txt, max_values_in_range, dl_save_txt, DNA_BASES
 #from genome_search_optional import
 
 SKEW_DICT = {
@@ -15,9 +15,13 @@ SKEW_DICT = {
             "T":  0,
             }
 
+
 def folder_txt_files(folder: str) -> tuple:
     """
     returns a list of paths of all text files in the specified folder
+    :param str name: folder path
+    :returns: list of files in the folder that end with .txt
+
     """
     path = os.path.normpath(folder)
     file_list = [os.path.join(path, file) for file in os.listdir(path) if file.endswith(".txt")]
@@ -115,6 +119,39 @@ def approximate_pattern_count(pattern: str, sequence: str, mismatches: int) -> i
     """
     return len(aproximate_pattern_match(pattern, sequence, mismatches))
 
+
+
+def immediate_neighbors(pattern: str) -> set:
+    """
+    input a sequence
+    returns all sequences where the hamming distance is 1
+    find all related sequence where the hamming distance does not exceed the input value
+    iterate through each individual base to create a mismatch 1, 2, 3, etc
+    recursively call immediate_neighbors to create the other values
+    """
+
+    sequence_set = set()
+    for i in range(len(pattern)):
+        for base in DNA_BASES:
+            if pattern[i] != base:
+                temp_seq = list(pattern)
+                temp_seq[i] = base
+                sequence_set.add("".join(temp_seq))
+
+    for value in sequence_set:
+        assert hamming_distance(pattern, value) == 1
+
+    return sequence_set
+
+def neighbors(pattern: str, d: int):
+    """
+    recursively call immediate neighbors on all iterations of neighbors until
+    the hamming distance is less than or equal to d
+
+    """
+    pass
+
+
 def frequent_words_with_mismatches(sequence: str, length: int, mismatches: int) -> list:
     """
     count the number of times a string has an approximate match in the text
@@ -126,8 +163,9 @@ def frequent_words_with_mismatches(sequence: str, length: int, mismatches: int) 
     """
 
     word_list = []
-    for bp in range(len(sequence - length)):
-        print(sequence[bp])
+    for i in range(len(sequence - length + 1)):
+        pattern = sequence[i:i + length]
+
 
 
     return word_list
@@ -201,6 +239,9 @@ def main(cfg):
         text = extract_seq_from_txt(file).split('\n')
         print(approximate_pattern_count(text[0], text[1], int(text[2])))
 
+
+    print(immediate_neighbors("ATGC"))
+    """
     # most frequent words with mismatches
     for file in folder_txt_files(cfg.folders.frequent_words_with_mismatches):
         print(file)
@@ -208,6 +249,8 @@ def main(cfg):
         # turn strings into integers and unpack values
         kmer_length , mismatches = [int(x) for x in text[1].split(" ")]
         frequent_words_with_mismatches(text[0], kmer_length, mismatches)
+    """
+
 
 if __name__ == "__main__":
     main()

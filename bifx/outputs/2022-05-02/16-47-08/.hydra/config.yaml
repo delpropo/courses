@@ -1,0 +1,36 @@
+skew_sample:
+  input: CATGGGCATCGGCCATACGCC
+  output: 0 -1 -1 -1 0 1 2 1 1 1 0 1 2 1 0 0 0 0 -1 0 -1 -2
+skew_test:
+  input: GAGCCACCGCGATA
+minimum_skew_sample:
+  input: TAAAGACTGCCGAGAGGCCAACACGAGTGCTAGAACGAGGGGCGTAAACGCGGGTCCGAT
+  output: 11 24
+paths:
+  skew: .\data\skew
+files:
+  min_skew_test: ${hydra:runtime.cwd}\data\skew\dataset_7_10.txt
+  hamming_distance_sample: ${hydra:runtime.cwd}\data\hamming_distance\hamming_distance_sample.txt
+  hamming_distance_test: ${hydra:runtime.cwd}\data\hamming_distance\dataset_9_3.txt
+  approximate_pattern_match_sample: ${hydra:runtime.cwd}\data\hamming_distance\apms.txt
+  approximate_pattern_match_test: ${hydra:runtime.cwd}\data\hamming_distance\dataset_9_4.txt
+folders:
+  approximate_pattern_count_sample: ${hydra:runtime.cwd}\data\ApproximatePatternCount\input
+  frequent_words_with_mismatches: ${hydra:runtime.cwd}\data\FrequentWordsMismatches\inputs
+hamming_distance_sample:
+  input: ''' GGGCCGTTGGT GGACCGTTGAC '''
+  output: 3
+freq_approximate_pattern_match_sample:
+  sequence: AACAAGCTGATAAACATTTAAAGAG
+  pattern: AAAAA
+  mismatches: 1
+  answer: 4
+freq_approximate_pattern_match_test:
+  sequence: AACAAGCTGATAAACATTTAAAGAG
+  pattern: AAAAA
+  mismatches: 2
+approximate_pattern_count_sample:
+  sequence: TTTAGAGCCTTCAGAGG
+  pattern: GAGG
+  mismatches: 2
+  answer: 4
